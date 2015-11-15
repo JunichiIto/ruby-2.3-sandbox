@@ -84,6 +84,7 @@ class SampleTest < Minitest::Test
   def test_positive?
     numbers = (-5..5)
 
+    # positive? メソッドと negative? メソッドを使って、正または負の値を抜き出す
     assert_equal [1, 2, 3, 4, 5], numbers.select(&:positive?)
     assert_equal [-5, -4, -3, -2, -1], numbers.select(&:negative?)
   end
