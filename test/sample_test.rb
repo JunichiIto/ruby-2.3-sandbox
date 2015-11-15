@@ -90,14 +90,25 @@ class SampleTest < Minitest::Test
   end
 
   def test_hash_operators
-    small     = { a: 1                }
-    medium    = { a: 1, b: 2          }
-    large     = { a: 1, b: 2, c: 3    }
-    different = { totally: :different }
-
+    # 右のハッシュは左のハッシュのサブセットである
     assert({ a: 1, b: 2 } > { a: 1 })
+
+    # 右のハッシュは左のハッシュのサブセットではない（値が異なる）
+    refute({ a: 1, b: 2 } > { a: 10 })
+
+    # 右のハッシュは左のハッシュのサブセットではない（等しい）
     refute({ a: 1 } > { a: 1 })
+
+    # 右のハッシュは左のハッシュのサブセット、もしくは両者が等しい
+    assert({ a: 1 } >= { a: 1 })
+
+    # 右のハッシュは左のハッシュのサブセットではない（別物）
     refute({ b: 1 } > { a: 1 })
+
+    # 左のハッシュは右のハッシュのサブセットではない（別物）
+    refute({ b: 1 } < { a: 1 })
+
+    # 左のハッシュは右のハッシュのサブセットである
     assert({ a: 1, b: 2 } < { a: 1, b: 2, c: 3 })
   end
 
