@@ -116,9 +116,23 @@ class SampleTest < Minitest::Test
     hash = { a: 1, b: 2, c: 3 }
     keys = %i[a c d]
 
+    # ハッシュをProcに変換できる
     assert_equal [1, 3, nil], keys.map(&hash)
+
+    # 次のようにProc化したハッシュを個別に呼び出すこともできる
+    hash_proc = hash.to_proc
+    assert_equal 1, hash_proc.call(:a)
+    assert_equal 2, hash_proc.call(:b)
+    assert_equal nil, hash_proc.call(:d)
+
+    # つまり &hash は下のようなコードと同等
+    assert_equal [1, 3, nil], keys.map { |k| hash_proc.call(k) }
+
+    # ハッシュをProc化しない場合は次のようなコードになる
+    assert_equal [1, 3, nil], keys.map { |k| hash[k] }
   end
 
+  require 'active_support/core_ext/object/try'
   User = Struct.new(:address)
   Address = Struct.new(:street)
   Street = Struct.new(:first_lane)
@@ -126,10 +140,18 @@ class SampleTest < Minitest::Test
     street = Street.new('123')
     address = Address.new(street)
     user = User.new(address)
+    # オブジェクトが存在する場合は普通にメソッドを呼び出せる
     assert_equal '123', user&.address&.street&.first_lane
 
+    # Railsであれば try を使ったコードと同等
+    assert_equal '123', user.try(:address).try(:street).try(:first_lane)
+
     other = User.new
+    # オブジェクトがnilでもNoMethodErrorが発生せずにnilが返る
     assert_nil other&.address&.street&.first_lane
+
+    # try を使った場合
+    assert_nil other.try(:address).try(:street).try(:first_lane)
   end
 
   def test_frozen_string
