@@ -52,11 +52,11 @@ class SampleTest < Minitest::Test
   def test_array_grep_v
     items = [1, 1.0, '1', nil]
 
-    # Numericであるオブジェクトを探す
+    # Numeric型のオブジェクトを探す
     nums   = items.grep(Numeric)
     assert_equal [1, 1.0], nums
 
-    # Numeric以外のオブジェクトを探す
+    # Numeric型以外のオブジェクトを探す
     others = items.grep_v(Numeric)
     assert_equal ['1', nil], others
   end
@@ -69,10 +69,14 @@ class SampleTest < Minitest::Test
         qux: 4
     }
 
+    # Keyが存在する場合は values_at も fetch_values も同じ結果を返す
     assert_equal [1, 2], values.values_at(:foo, :bar)
     assert_equal [1, 2], values.fetch_values(:foo, :bar)
 
+    # Keyが存在しない場合、 values_at は nil を返す
     assert_equal [1, 2, nil], values.values_at(:foo, :bar, :invalid)
+
+    # Keyが存在しない場合、 fetch_values はエラーが発生する
     e = assert_raises(KeyError) { values.fetch_values(:foo, :bar, :invalid) }
     assert_equal 'key not found: :invalid', e.message
   end
