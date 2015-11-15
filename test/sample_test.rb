@@ -153,8 +153,4 @@ class SampleTest < Minitest::Test
     # try を使った場合
     assert_nil other.try(:address).try(:street).try(:first_lane)
   end
-
-  def test_frozen_string
-    assert_equal "dlrow olleH", "Hello world".reverse!
-  end
 end
