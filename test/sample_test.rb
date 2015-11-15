@@ -1,7 +1,7 @@
 require_relative '../test/test_helper'
 
 class SampleTest < Minitest::Test
-  def test_dig
+  def test_hash_dig
     user = {
         user: {
             address: {
@@ -12,12 +12,29 @@ class SampleTest < Minitest::Test
 
     assert_equal '123 Main street', user.dig(:user, :address, :street1)
 
+    # Keyが存在する場合は以下のコードと同等
+    assert_equal '123 Main street', user[:user][:address][:street1]
+
+    # 存在しないKeyを指定するとnilが返ってくる（エラーは起きない）
+    assert_nil user.dig(:user, :adddresss, :street1)
+
+    # 普通に[]を使うとエラーになる
+    assert_raises { user[:user][:adddresss][:street1] }
+  end
+
+  def test_array_dig
     results = [[[1, 2, 3]]]
 
     assert_equal 1, results.dig(0, 0, 0)
 
-    assert_nil user.dig(:user, :adddresss, :street1)
-    assert_nil user.dig(:user, :address, :street2)
+    # Indexが存在する場合は以下のコードと同様
+    assert_equal 1, results[0][0][0]
+
+    # 存在しないIndexを指定するとnilが返ってくる（エラーは起きない）
+    assert_nil results.dig(1, 1, 1)
+
+    # 普通に[]を使うとエラーになる
+    assert_raises { results[1][1][1] }
   end
 
   def test_grep_v
