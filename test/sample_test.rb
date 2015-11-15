@@ -37,20 +37,26 @@ class SampleTest < Minitest::Test
     assert_raises { results[1][1][1] }
   end
 
-  def test_grep_v
+  def test_hash_grep_v
     friends = %w[John Alain Jim Delmer]
 
-    j_friends = friends.grep(/^J/)   # => ["John", "Jim"]
+    # Jで始まる文字列を探す
+    j_friends = friends.grep(/^J/)
     assert_equal %w(John Jim), j_friends
 
-    others    = friends.grep_v(/^J/) # => ["Alain", "Delmer"]
+    # J以外で始まる文字列を探す
+    others    = friends.grep_v(/^J/)
     assert_equal %w(Alain Delmer), others
+  end
 
+  def test_array_grep_v
     items = [1, 1.0, '1', nil]
 
+    # Numericであるオブジェクトを探す
     nums   = items.grep(Numeric)
     assert_equal [1, 1.0], nums
 
+    # Numeric以外のオブジェクトを探す
     others = items.grep_v(Numeric)
     assert_equal ['1', nil], others
   end
