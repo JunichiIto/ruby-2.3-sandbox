@@ -92,4 +92,8 @@ class SampleTest < Minitest::Test
     other = User.new
     assert_nil other&.address&.street&.first_lane
   end
+
+  def test_frozen_string
+    assert_equal "dlrow olleH", "Hello world".reverse!
+  end
 end
