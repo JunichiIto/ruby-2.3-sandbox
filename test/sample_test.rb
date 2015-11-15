@@ -10,6 +10,7 @@ class SampleTest < Minitest::Test
         }
     }
 
+    # digを使って深い階層の値を一気に取得する
     assert_equal '123 Main street', user.dig(:user, :address, :street1)
 
     # Keyが存在する場合は以下のコードと同等
@@ -25,6 +26,7 @@ class SampleTest < Minitest::Test
   def test_array_dig
     results = [[[1, 2, 3]]]
 
+    # digを使って深い階層の値を一気に取得する
     assert_equal 1, results.dig(0, 0, 0)
 
     # Indexが存在する場合は以下のコードと同様
@@ -37,7 +39,8 @@ class SampleTest < Minitest::Test
     assert_raises { results[1][1][1] }
   end
 
-  def test_hash_grep_v
+  # 正規表現 + grep_v を使う場合
+  def test_grep_v_by_regex
     friends = %w[John Alain Jim Delmer]
 
     # Jで始まる文字列を探す
@@ -49,7 +52,8 @@ class SampleTest < Minitest::Test
     assert_equal %w(Alain Delmer), others
   end
 
-  def test_array_grep_v
+  # # 型情報 + grep_v を使う場合
+  def test_grep_v_by_type
     items = [1, 1.0, '1', nil]
 
     # Numeric型のオブジェクトを探す
@@ -79,9 +83,12 @@ class SampleTest < Minitest::Test
     # Keyが存在しない場合、 fetch_values はエラーが発生する
     e = assert_raises(KeyError) { values.fetch_values(:foo, :bar, :invalid) }
     assert_equal 'key not found: :invalid', e.message
+
+    # Hash#fetch と同様、fetch_values はブロックを使ってデフォルト値を返すことができる
+    assert_equal [1, 2, :invalid], values.fetch_values(:foo, :bar, :invalid) {|k| k }
   end
 
-  def test_positive?
+  def test_positive_and_negative
     numbers = (-5..5)
 
     # positive? メソッドと negative? メソッドを使って、正または負の値を抜き出す
@@ -143,14 +150,12 @@ class SampleTest < Minitest::Test
     # オブジェクトが存在する場合は普通にメソッドを呼び出せる
     assert_equal '123', user&.address&.street&.first_lane
 
-    # Railsであれば try を使ったコードと同等
-    assert_equal '123', user.try(:address).try(:street).try(:first_lane)
-
     other = User.new
     # オブジェクトがnilでもNoMethodErrorが発生せずにnilが返る
     assert_nil other&.address&.street&.first_lane
 
-    # try を使った場合
+    # Railsであれば try を使ったコードと同等
+    assert_equal '123', user.try(:address).try(:street).try(:first_lane)
     assert_nil other.try(:address).try(:street).try(:first_lane)
   end
 end
