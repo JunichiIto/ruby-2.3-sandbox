@@ -154,8 +154,8 @@ class SampleTest < Minitest::Test
     # オブジェクトがnilでもNoMethodErrorが発生せずにnilが返る
     assert_nil other&.address&.street&.first_lane
 
-    # Railsであれば try を使ったコードと同等
-    assert_equal '123', user.try(:address).try(:street).try(:first_lane)
-    assert_nil other.try(:address).try(:street).try(:first_lane)
+    # Railsであれば try! を使ったコードと同等
+    assert_equal '123', user.try!(:address).try!(:street).try!(:first_lane)
+    assert_nil other.try!(:address).try!(:street).try!(:first_lane)
   end
 end
