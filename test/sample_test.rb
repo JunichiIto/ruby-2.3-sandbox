@@ -154,8 +154,12 @@ class SampleTest < Minitest::Test
     # オブジェクトがnilでもNoMethodErrorが発生せずにnilが返る
     assert_nil other&.address&.street&.first_lane
 
+    # nil でないオブジェクトに対して存在しないメソッドを呼ぶとエラーが起きる
+    assert_raises(NoMethodError) { other&.adddress&.street&.first_lane }
+
     # Railsであれば try! を使ったコードと同等
     assert_equal '123', user.try!(:address).try!(:street).try!(:first_lane)
     assert_nil other.try!(:address).try!(:street).try!(:first_lane)
+    assert_raises(NoMethodError) { other.try!(:adddress).try!(:street).try!(:first_lane) }
   end
 end
