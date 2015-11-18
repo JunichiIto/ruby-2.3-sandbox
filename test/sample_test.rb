@@ -165,16 +165,16 @@ class SampleTest < Minitest::Test
 
   def test_bsearch_index
     # バイナリサーチ（二分探索）を使ってindexを探す
-    assert_equal 0, [0, 1, 2].bsearch_index {|x| x < 2 }
+    assert_equal 0, [10, 11, 12].bsearch_index {|x| x < 12 }
 
     # 通常のindexを使っても結果は同じ
-    assert_equal 0, [0, 1, 2].index {|x| x < 2 }
+    assert_equal 0, [10, 11, 12].index {|x| x < 12 }
 
     # 配列が予めソートされていない場合、バイナリサーチは間違った結果を返す場合がある
-    refute_equal 0, [0, 2, 1].bsearch_index {|x| x < 2 }
+    refute_equal 0, [10, 12, 11].bsearch_index {|x| x < 12 }
 
     # 通常のindexであればソートされていなくても問題ない
-    assert_equal 0, [0, 2, 1].index {|x| x < 2 }
+    assert_equal 0, [10, 12, 11].index {|x| x < 12 }
   end
 
   def test_chunk_while
