@@ -188,14 +188,15 @@ class SampleTest < Minitest::Test
     assert_equal [[7, 5, 9], [2, 0], [7, 9], [4, 2, 0]], results
   end
 
-  class Foo
+  class ::Foo
     BAR = 'Deprecated constant'
     # BARは deprecated （非推奨）な定数とする
     deprecate_constant :BAR
   end
+
   def test_deprecate_constant
     # Foo::BAR を参照すると警告が出力される
-    assert_output(nil, /warning: constant SampleTest::Foo::BAR is deprecated/) { Foo::BAR }
+    assert_output(nil, /warning: constant Foo::BAR is deprecated/) { Foo::BAR }
   end
 
   def test_name_error_receiver
