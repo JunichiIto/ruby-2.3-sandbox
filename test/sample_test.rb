@@ -162,4 +162,52 @@ class SampleTest < Minitest::Test
     assert_nil other.try!(:address).try!(:street).try!(:first_lane)
     assert_raises(NoMethodError) { other.try!(:adddress).try!(:street).try!(:first_lane) }
   end
+
+  def test_bsearch_index
+    # バイナリサーチ（二分探索）を使ってindexを探す
+    assert_equal 0, [0, 1, 2].bsearch_index {|x| x < 2 }
+
+    # 通常のindexを使っても結果は同じ
+    assert_equal 0, [0, 1, 2].index {|x| x < 2 }
+
+    # 配列が予めソートされていない場合、バイナリサーチは間違った結果を返す場合がある
+    refute_equal 0, [0, 2, 1].bsearch_index {|x| x < 2 }
+
+    # 通常のindexであればソートされていなくても問題ない
+    assert_equal 0, [0, 2, 1].index {|x| x < 2 }
+  end
+
+  def test_chunk_while
+    data = [7, 5, 9, 2, 0, 7, 9, 4, 2, 0]
+    # 隣り合う偶数同士、奇数同士の部分配列ごとに分ける
+    results = data.chunk_while { |i, j| i.even? == j.even? }.to_a
+    assert_equal [[7, 5, 9], [2, 0], [7, 9], [4, 2, 0]], results
+
+    # slice_whenでも同じことができる。ただし条件が否定形になる
+    results = data.slice_when { |i, j| i.even? != j.even? }.to_a
+    assert_equal [[7, 5, 9], [2, 0], [7, 9], [4, 2, 0]], results
+  end
+
+  class Foo
+    BAR = 'Deprecated constant'
+    # BARは deprecated （非推奨）な定数とする
+    deprecate_constant :BAR
+  end
+  def test_deprecate_constant
+    # Foo::BAR を参照すると警告が出力される
+    assert_output(nil, /warning: constant SampleTest::Foo::BAR is deprecated/) { Foo::BAR }
+  end
+
+  def test_name_error_receiver
+    receiver = "receiver"
+    e = receiver.to_ss rescue $!
+    # エラーからレシーバを取得できる
+    assert_same receiver, e.receiver
+    assert_instance_of NoMethodError, e
+
+    e = foo_bar.to_s rescue $!
+    # NoMethodErrorの親クラスであるNameErrorでもレシーバを取得できる
+    assert_same self, e.receiver
+    assert_instance_of NameError, e
+  end
 end
