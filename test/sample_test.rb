@@ -211,4 +211,13 @@ class SampleTest < Minitest::Test
     assert_same self, e.receiver
     assert_instance_of NameError, e
   end
+
+  def test_squiggly_heredoc
+    text = <<~TEXT
+      This would contain specially formatted text.
+      That might span many lines
+    TEXT
+    expected = "This would contain specially formatted text.\nThat might span many lines\n"
+    assert_equal expected, text
+  end
 end
