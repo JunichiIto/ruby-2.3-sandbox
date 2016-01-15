@@ -214,21 +214,27 @@ class SampleTest < Minitest::Test
   end
 
   def test_squiggly_heredoc
-    # <<~ を使うと最もインデントが少ない行を基準にして、全ての行の先頭からから空白を取り除く
-    text = <<~TEXT
+    # <<- を使うと、ヒアドキュメント内のインデントがそのままスペースとして残ってしまう
+    text_with_legacy_heredoc = <<-TEXT
       This would contain specially formatted text.
-
       That might span many lines
     TEXT
-    expected = "This would contain specially formatted text.\n\nThat might span many lines\n"
-    assert_equal expected, text
+    expected = "      This would contain specially formatted text.\n      That might span many lines\n"
+    assert_equal expected, text_with_legacy_heredoc
 
-    # Railsのstrip_heredocも同じ動きをする（細部で異なる点はあるかも？）
+    # Railsのstrip_heredocを使うと、インデントのスペースを取り除くことができる
     text_with_strip_heredoc = <<-TEXT.strip_heredoc
       This would contain specially formatted text.
-
       That might span many lines
     TEXT
+    expected = "This would contain specially formatted text.\nThat might span many lines\n"
     assert_equal expected, text_with_strip_heredoc
+
+    # <<~ を使うとstrip_heredocと同じようにインデントのスペースを取り除いてくれる（Ruby 2.3）
+    text_with_squiggly_heredoc = <<~TEXT
+      This would contain specially formatted text.
+      That might span many lines
+    TEXT
+    assert_equal expected, text_with_squiggly_heredoc
   end
 end
