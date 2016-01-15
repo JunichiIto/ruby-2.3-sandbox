@@ -1,4 +1,5 @@
 require_relative '../test/test_helper'
+require 'active_support/core_ext/string/strip'
 
 class SampleTest < Minitest::Test
   def test_hash_dig
@@ -213,11 +214,21 @@ class SampleTest < Minitest::Test
   end
 
   def test_squiggly_heredoc
+    # <<~ を使うと最もインデントが少ない行を基準にして、全ての行の先頭からから空白を取り除く
     text = <<~TEXT
       This would contain specially formatted text.
+
       That might span many lines
     TEXT
-    expected = "This would contain specially formatted text.\nThat might span many lines\n"
+    expected = "This would contain specially formatted text.\n\nThat might span many lines\n"
     assert_equal expected, text
+
+    # Railsのstrip_heredocも同じ動きをする（細部で異なる点はあるかも？）
+    text_with_strip_heredoc = <<-TEXT.strip_heredoc
+      This would contain specially formatted text.
+
+      That might span many lines
+    TEXT
+    assert_equal expected, text_with_strip_heredoc
   end
 end
